@@ -11,13 +11,13 @@ const queryMiddleware = (req, res, next) => {
   delete query.page;
   if (Object.keys(query).length === 0) return next();
   const queryArray = Object.keys(query);
-  const searchArray = [];
+  req.queryOptions.query = [];
   queryArray.forEach((item) => {
     let keywords = query[item].match(/"([^"]+)"|\S+/g);
     if (keywords) {
       keywords = keywords.map((s) => s.replace(/^"|"$/g, ''));
       keywords.forEach((word) =>
-        searchArray.push({
+        req.queryOptions.query.push({
           [item]: {
             contains: word,
             mode: 'insensitive',
@@ -26,9 +26,6 @@ const queryMiddleware = (req, res, next) => {
       );
     }
   });
-  req.queryObject.where = {
-    OR: searchArray,
-  };
   return next();
 };
 

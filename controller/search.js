@@ -17,7 +17,6 @@ const getSearchArray = (query, term) => {
       mode: 'insensitive',
     },
   }));
-  console.log('searchArray: ', searchArray);
   return searchArray;
 };
 

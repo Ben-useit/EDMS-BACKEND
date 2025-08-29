@@ -7,6 +7,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model node_acl {
+  id                                 Int                                  @id @default(autoincrement())
+  object_id String
+  object_type String
+  actor_id Int
+  actor_type_id Int
+  actor_type node_actor_type @relation(fields: [actor_type_id], references: [id])
+  permission_id Int
+  permission node_permission @relation(fields: [permission_id], references: [id])
+}
+
+model node_permission {
+  id Int @id @default(autoincrement())
+  label String @unique
+  acls node_acl[] 
+}
+
+model node_actor_type {
+  id Int @id @default(autoincrement())
+  label String @unique
+  acls node_acl[]
+}
+
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model acls_accesscontrollist {
