@@ -1,6 +1,8 @@
 require('dotenv');
 const express = require('express');
 const documentRouter = require('./routes/document');
+const searchRouter = require('./routes/search');
+const registerRouter = require('./routes/register');
 
 // Swagger
 const swaggerUI = require('swagger-ui-express');
@@ -13,6 +15,8 @@ const app = express();
 app.use(express.json());
 
 app.use('/api/v1/documents', documentRouter);
+app.use('/api/v1/register', registerRouter);
+app.use('/api/v1/search', searchRouter);
 
 app.get('/', (req, res) => {
   res.send('<h1>EDMS API</h1><a href="/api-docs">Documentation</a>');

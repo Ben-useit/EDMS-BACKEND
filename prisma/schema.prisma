@@ -1817,3 +1817,8 @@ model user_management_useroptions {
   display_closed_register_files Boolean
   auth_user                     auth_user @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_management_useroptions_user_id_84734306_fk_auth_user_id")
 }
+
+model document_test{
+  id Int       @id @default(autoincrement())
+  label String
+}
