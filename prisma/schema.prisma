@@ -1,0 +1,1819 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model acls_accesscontrollist {
+  id                                 Int                                  @id @default(autoincrement())
+  object_id                          Int
+  content_type_id                    Int
+  role_id                            Int
+  django_content_type                django_content_type                  @relation(fields: [content_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "acls_accesscontrolli_content_type_id_324a36ca_fk_django_co")
+  permissions_role                   permissions_role                     @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "acls_accesscontrollist_role_id_935b00e2_fk_permissions_role_id")
+  acls_accesscontrollist_permissions acls_accesscontrollist_permissions[]
+
+  @@unique([content_type_id, object_id, role_id], map: "acls_accesscontrollist_content_type_id_object_i_071de930_uniq")
+  @@index([content_type_id], map: "acls_accesscontrollist_content_type_id_324a36ca")
+  @@index([role_id], map: "acls_accesscontrollist_role_id_935b00e2")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model acls_accesscontrollist_permissions {
+  id                           Int                          @id @default(autoincrement())
+  accesscontrollist_id         Int
+  storedpermission_id          Int
+  acls_accesscontrollist       acls_accesscontrollist       @relation(fields: [accesscontrollist_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "acls_accesscontrolli_accesscontrollist_id_c84800e5_fk_acls_acce")
+  permissions_storedpermission permissions_storedpermission @relation(fields: [storedpermission_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "acls_accesscontrolli_storedpermission_id_342d4fc3_fk_permissio")
+
+  @@unique([accesscontrollist_id, storedpermission_id], map: "acls_accesscontrollist_p_accesscontrollist_id_sto_a6be00ef_uniq")
+  @@index([accesscontrollist_id], map: "acls_accesscontrollist_per_accesscontrollist_id_c84800e5")
+  @@index([storedpermission_id], map: "acls_accesscontrollist_permissions_storedpermission_id_342d4fc3")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model actstream_action {
+  id                                                                                      Int                   @id @default(autoincrement())
+  actor_object_id                                                                         String                @db.VarChar(255)
+  verb                                                                                    String                @db.VarChar(255)
+  description                                                                             String?
+  target_object_id                                                                        String?               @db.VarChar(255)
+  action_object_object_id                                                                 String?               @db.VarChar(255)
+  timestamp                                                                               DateTime              @db.Timestamptz(6)
+  public                                                                                  Boolean
+  action_object_content_type_id                                                           Int?
+  actor_content_type_id                                                                   Int
+  target_content_type_id                                                                  Int?
+  django_content_type_actstream_action_action_object_content_type_idTodjango_content_type django_content_type?  @relation("actstream_action_action_object_content_type_idTodjango_content_type", fields: [action_object_content_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "actstream_action_action_object_conten_ee623c15_fk_django_co")
+  django_content_type_actstream_action_actor_content_type_idTodjango_content_type         django_content_type   @relation("actstream_action_actor_content_type_idTodjango_content_type", fields: [actor_content_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "actstream_action_actor_content_type_i_d5e5ec2a_fk_django_co")
+  django_content_type_actstream_action_target_content_type_idTodjango_content_type        django_content_type?  @relation("actstream_action_target_content_type_idTodjango_content_type", fields: [target_content_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "actstream_action_target_content_type__187fa164_fk_django_co")
+  events_notification                                                                     events_notification[]
+
+  @@index([action_object_content_type_id], map: "actstream_action_action_object_content_type_id_ee623c15")
+  @@index([action_object_object_id], map: "actstream_action_action_object_object_id_6433bdf7")
+  @@index([action_object_object_id], map: "actstream_action_action_object_object_id_6433bdf7_like")
+  @@index([actor_content_type_id], map: "actstream_action_actor_content_type_id_d5e5ec2a")
+  @@index([actor_object_id], map: "actstream_action_actor_object_id_72ef0cfa")
+  @@index([actor_object_id], map: "actstream_action_actor_object_id_72ef0cfa_like")
+  @@index([public], map: "actstream_action_public_ac0653e9")
+  @@index([target_content_type_id], map: "actstream_action_target_content_type_id_187fa164")
+  @@index([target_object_id], map: "actstream_action_target_object_id_e080d801")
+  @@index([target_object_id], map: "actstream_action_target_object_id_e080d801_like")
+  @@index([timestamp], map: "actstream_action_timestamp_a23fe3ae")
+  @@index([verb], map: "actstream_action_verb_83f768b7")
+  @@index([verb], map: "actstream_action_verb_83f768b7_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model actstream_follow {
+  id                  Int                 @id @default(autoincrement())
+  object_id           String              @db.VarChar(255)
+  actor_only          Boolean
+  started             DateTime            @db.Timestamptz(6)
+  content_type_id     Int
+  user_id             Int
+  django_content_type django_content_type @relation(fields: [content_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "actstream_follow_content_type_id_ba287eb9_fk_django_co")
+  auth_user           auth_user           @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "actstream_follow_user_id_e9d4e1ff_fk_auth_user_id")
+
+  @@unique([user_id, content_type_id, object_id], map: "actstream_follow_user_id_content_type_id__63ca7c27_uniq")
+  @@index([content_type_id], map: "actstream_follow_content_type_id_ba287eb9")
+  @@index([object_id], map: "actstream_follow_object_id_d790e00d")
+  @@index([object_id], map: "actstream_follow_object_id_d790e00d_like")
+  @@index([started], map: "actstream_follow_started_254c63bd")
+  @@index([user_id], map: "actstream_follow_user_id_e9d4e1ff")
+}
+
+model auth_group {
+  id                      Int                       @id @default(autoincrement())
+  name                    String                    @unique @db.VarChar(80)
+  auth_group_permissions  auth_group_permissions[]
+  auth_user_groups        auth_user_groups[]
+  permissions_role_groups permissions_role_groups[]
+
+  @@index([name], map: "auth_group_name_a6ea08ec_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model auth_group_permissions {
+  id              Int             @id @default(autoincrement())
+  group_id        Int
+  permission_id   Int
+  auth_permission auth_permission @relation(fields: [permission_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_group_permissio_permission_id_84c5c92e_fk_auth_perm")
+  auth_group      auth_group      @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_group_permissions_group_id_b120cbf9_fk_auth_group_id")
+
+  @@unique([group_id, permission_id], map: "auth_group_permissions_group_id_permission_id_0cd325b0_uniq")
+  @@index([group_id], map: "auth_group_permissions_group_id_b120cbf9")
+  @@index([permission_id], map: "auth_group_permissions_permission_id_84c5c92e")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model auth_permission {
+  id                         Int                          @id @default(autoincrement())
+  name                       String                       @db.VarChar(255)
+  content_type_id            Int
+  codename                   String                       @db.VarChar(100)
+  auth_group_permissions     auth_group_permissions[]
+  django_content_type        django_content_type          @relation(fields: [content_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_permission_content_type_id_2f476e4b_fk_django_co")
+  auth_user_user_permissions auth_user_user_permissions[]
+
+  @@unique([content_type_id, codename], map: "auth_permission_content_type_id_codename_01ab375a_uniq")
+  @@index([content_type_id], map: "auth_permission_content_type_id_2f476e4b")
+}
+
+model auth_user {
+  id                                       Int                                        @id @default(autoincrement())
+  password                                 String                                     @db.VarChar(128)
+  last_login                               DateTime?                                  @db.Timestamptz(6)
+  is_superuser                             Boolean
+  username                                 String                                     @unique @db.VarChar(150)
+  first_name                               String                                     @db.VarChar(30)
+  last_name                                String                                     @db.VarChar(30)
+  email                                    String                                     @db.VarChar(254)
+  is_staff                                 Boolean
+  is_active                                Boolean
+  date_joined                              DateTime                                   @db.Timestamptz(6)
+  actstream_follow                         actstream_follow[]
+  auth_user_groups                         auth_user_groups[]
+  auth_user_user_permissions               auth_user_user_permissions[]
+  authtoken_token                          authtoken_token?
+  autoadmin_autoadminsingleton             autoadmin_autoadminsingleton[]
+  checkouts_documentcheckout               checkouts_documentcheckout[]
+  common_userlocaleprofile                 common_userlocaleprofile?
+  django_admin_log                         django_admin_log[]
+  document_comments_comment                document_comments_comment[]
+  document_states_workflowinstancelogentry document_states_workflowinstancelogentry[]
+  documents_favoritedocument               documents_favoritedocument[]
+  documents_recentdocument                 documents_recentdocument[]
+  events_eventsubscription                 events_eventsubscription[]
+  events_notification                      events_notification[]
+  events_objecteventsubscription           events_objecteventsubscription[]
+  register_register_last_lawyers           register_register_last_lawyers[]
+  register_register_lawyers                register_register_lawyers[]
+  sapitwa_listoptions                      sapitwa_listoptions[]
+  sapitwa_tempdocument                     sapitwa_tempdocument[]
+  sapitwa_userstats                        sapitwa_userstats[]
+  user_management_useroptions              user_management_useroptions?
+
+  @@index([username], map: "auth_user_username_6821ab7c_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model auth_user_groups {
+  id         Int        @id @default(autoincrement())
+  user_id    Int
+  group_id   Int
+  auth_group auth_group @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_user_groups_group_id_97559544_fk_auth_group_id")
+  auth_user  auth_user  @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_user_groups_user_id_6a12ed8b_fk_auth_user_id")
+
+  @@unique([user_id, group_id], map: "auth_user_groups_user_id_group_id_94350c0c_uniq")
+  @@index([group_id], map: "auth_user_groups_group_id_97559544")
+  @@index([user_id], map: "auth_user_groups_user_id_6a12ed8b")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model auth_user_user_permissions {
+  id              Int             @id @default(autoincrement())
+  user_id         Int
+  permission_id   Int
+  auth_permission auth_permission @relation(fields: [permission_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_user_user_permi_permission_id_1fbb5f2c_fk_auth_perm")
+  auth_user       auth_user       @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_user_user_permissions_user_id_a95ead1b_fk_auth_user_id")
+
+  @@unique([user_id, permission_id], map: "auth_user_user_permissions_user_id_permission_id_14a6b632_uniq")
+  @@index([permission_id], map: "auth_user_user_permissions_permission_id_1fbb5f2c")
+  @@index([user_id], map: "auth_user_user_permissions_user_id_a95ead1b")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model authtoken_token {
+  key       String    @id @db.VarChar(40)
+  created   DateTime  @db.Timestamptz(6)
+  user_id   Int       @unique
+  auth_user auth_user @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "authtoken_token_user_id_35299eff_fk_auth_user_id")
+
+  @@index([key], map: "authtoken_token_key_10f0b77e_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model autoadmin_autoadminsingleton {
+  id            Int        @id @default(autoincrement())
+  password      String?    @db.VarChar(128)
+  password_hash String?    @db.VarChar(128)
+  account_id    Int?
+  auth_user     auth_user? @relation(fields: [account_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "autoadmin_autoadmins_account_id_9082b87a_fk_auth_user")
+
+  @@index([account_id], map: "autoadmin_autoadminsingleton_account_id_9082b87a")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model cabinets_cabinet {
+  id                         Int                          @id @default(autoincrement())
+  label                      String                       @db.VarChar(128)
+  lft                        Int
+  rght                       Int
+  tree_id                    Int
+  level                      Int
+  parent_id                  Int?
+  cabinets_cabinet           cabinets_cabinet?            @relation("cabinets_cabinetTocabinets_cabinet", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cabinets_cabinet_parent_id_0939a3c3_fk_cabinets_cabinet_id")
+  other_cabinets_cabinet     cabinets_cabinet[]           @relation("cabinets_cabinetTocabinets_cabinet")
+  cabinets_cabinet_documents cabinets_cabinet_documents[]
+  sapitwa_tempdocument       sapitwa_tempdocument[]
+
+  @@unique([parent_id, label], map: "cabinets_cabinet_parent_id_label_441a7709_uniq")
+  @@index([level], map: "cabinets_cabinet_level_3a69b80a")
+  @@index([lft], map: "cabinets_cabinet_lft_f348934b")
+  @@index([parent_id], map: "cabinets_cabinet_parent_id_0939a3c3")
+  @@index([rght], map: "cabinets_cabinet_rght_6ee2824c")
+  @@index([tree_id], map: "cabinets_cabinet_tree_id_c9719a3c")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model cabinets_cabinet_documents {
+  id                 Int                @id @default(autoincrement())
+  cabinet_id         Int
+  document_id        Int
+  cabinets_cabinet   cabinets_cabinet   @relation(fields: [cabinet_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cabinets_cabinet_doc_cabinet_id_5f9ca709_fk_cabinets_")
+  documents_document documents_document @relation(fields: [document_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cabinets_cabinet_doc_document_id_0f2a0f7a_fk_documents")
+
+  @@unique([cabinet_id, document_id], map: "cabinets_cabinet_documents_cabinet_id_document_id_fb3935b0_uniq")
+  @@index([cabinet_id], map: "cabinets_cabinet_documents_cabinet_id_5f9ca709")
+  @@index([document_id], map: "cabinets_cabinet_documents_document_id_0f2a0f7a")
+}
+
+model celery_taskmeta {
+  id        Int      @id @default(autoincrement())
+  task_id   String   @unique @db.VarChar(255)
+  status    String   @db.VarChar(50)
+  result    String?
+  date_done DateTime @db.Timestamptz(6)
+  traceback String?
+  hidden    Boolean
+  meta      String?
+
+  @@index([hidden], map: "celery_taskmeta_hidden_23fd02dc")
+  @@index([task_id], map: "celery_taskmeta_task_id_9558b198_like")
+}
+
+model celery_tasksetmeta {
+  id         Int      @id @default(autoincrement())
+  taskset_id String   @unique @db.VarChar(255)
+  result     String
+  date_done  DateTime @db.Timestamptz(6)
+  hidden     Boolean
+
+  @@index([hidden], map: "celery_tasksetmeta_hidden_593cfc24")
+  @@index([taskset_id], map: "celery_tasksetmeta_taskset_id_a5a1d4ae_like")
+}
+
+model checklist_checklist {
+  id                               Int                                @id @default(autoincrement())
+  name                             String                             @db.VarChar(256)
+  template                         String                             @db.VarChar(256)
+  checklist_checklisttemplateentry checklist_checklisttemplateentry[]
+  checklist_registerchecklist      checklist_registerchecklist[]
+  checklist_templateentry          checklist_templateentry[]
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model checklist_checklisttemplateentry {
+  id                      Int                     @id @default(autoincrement())
+  checklist_id            Int
+  template_entry_id       Int
+  checklist_checklist     checklist_checklist     @relation(fields: [checklist_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "checklist_checklistt_checklist_id_ca272e81_fk_checklist")
+  checklist_templateentry checklist_templateentry @relation(fields: [template_entry_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "checklist_checklistt_template_entry_id_2ecca0bc_fk_checklist")
+
+  @@index([checklist_id], map: "checklist_checklisttemplateentry_checklist_id_ca272e81")
+  @@index([template_entry_id], map: "checklist_checklisttemplateentry_template_entry_id_2ecca0bc")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model checklist_registerchecklist {
+  id                  Int                 @id @default(autoincrement())
+  checklist_id        Int
+  register_id         Int
+  checklist_checklist checklist_checklist @relation(fields: [checklist_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "checklist_registerch_checklist_id_a684fb1d_fk_checklist")
+  register_register   register_register   @relation(fields: [register_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "checklist_registerch_register_id_42a267e7_fk_register_")
+
+  @@index([checklist_id], map: "checklist_registerchecklist_checklist_id_a684fb1d")
+  @@index([register_id], map: "checklist_registerchecklist_register_id_42a267e7")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model checklist_registertemplateentry {
+  id                      Int                     @id @default(autoincrement())
+  value                   String?
+  register_id             Int
+  template_entry_id       Int
+  register_register       register_register       @relation(fields: [register_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "checklist_registerte_register_id_12bc3898_fk_register_")
+  checklist_templateentry checklist_templateentry @relation(fields: [template_entry_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "checklist_registerte_template_entry_id_c6a14771_fk_checklist")
+
+  @@index([register_id], map: "checklist_registertemplateentry_register_id_12bc3898")
+  @@index([template_entry_id], map: "checklist_registertemplateentry_template_entry_id_c6a14771")
+  @@index([value], map: "checklist_registertemplateentry_value_ba904357")
+  @@index([value], map: "checklist_registertemplateentry_value_ba904357_like")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model checklist_templateentry {
+  id                               Int                                @id @default(autoincrement())
+  number                           Float
+  symbol                           String                             @db.VarChar(32)
+  label                            String                             @db.VarChar(512)
+  entry_type                       String                             @db.VarChar(2)
+  indent                           Int
+  help_text                        String                             @db.VarChar(512)
+  checklist_id                     Int
+  checklist_checklisttemplateentry checklist_checklisttemplateentry[]
+  checklist_registertemplateentry  checklist_registertemplateentry[]
+  checklist_checklist              checklist_checklist                @relation(fields: [checklist_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "checklist_templateen_checklist_id_0f8147cc_fk_checklist")
+
+  @@index([checklist_id], map: "checklist_templateentry_checklist_id_0f8147cc")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model checkouts_documentcheckout {
+  id                  Int                @id @default(autoincrement())
+  checkout_datetime   DateTime           @db.Timestamptz(6)
+  expiration_datetime DateTime           @db.Timestamptz(6)
+  block_new_version   Boolean
+  document_id         Int                @unique
+  user_id             Int
+  documents_document  documents_document @relation(fields: [document_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "checkouts_documentch_document_id_edf8044b_fk_documents")
+  auth_user           auth_user          @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "checkouts_documentcheckout_user_id_f3ea15e3_fk_auth_user_id")
+
+  @@index([user_id], map: "checkouts_documentcheckout_user_id_f3ea15e3")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model checkouts_newversionblock {
+  id                 Int                @id @default(autoincrement())
+  document_id        Int
+  documents_document documents_document @relation(fields: [document_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "checkouts_newversion_document_id_144b2f2d_fk_documents")
+
+  @@index([document_id], map: "checkouts_newversionblock_document_id_144b2f2d")
+}
+
+model clients_client {
+  id                               Int                                @id @default(autoincrement())
+  name                             String                             @db.VarChar(256)
+  address                          String                             @db.VarChar(256)
+  city                             String                             @db.VarChar(256)
+  phone                            String                             @db.VarChar(256)
+  email                            String                             @db.VarChar(256)
+  is_ex_lawyer                     Boolean
+  clients_contact                  clients_contact[]
+  clients_contact_clients          clients_contact_clients[]
+  register_activefiletrackingchart register_activefiletrackingchart[]
+  register_register_clients        register_register_clients[]
+  tracking_trackedfile             tracking_trackedfile[]
+
+  @@index([name], map: "clients_client_name_f798fa6e")
+  @@index([name], map: "clients_client_name_f798fa6e_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model clients_contact {
+  id                         Int                          @id @default(autoincrement())
+  name                       String                       @db.VarChar(256)
+  position                   String                       @db.VarChar(256)
+  address                    String                       @db.VarChar(256)
+  city                       String                       @db.VarChar(256)
+  country                    String                       @db.VarChar(256)
+  phone                      String                       @db.VarChar(256)
+  email                      String                       @db.VarChar(256)
+  client_id                  Int?
+  clients_client             clients_client?              @relation(fields: [client_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "clients_contact_client_id_77862ce8_fk_clients_client_id")
+  clients_contact_clients    clients_contact_clients[]
+  register_register_contacts register_register_contacts[]
+
+  @@index([client_id], map: "clients_contact_client_id_77862ce8")
+  @@index([name], map: "clients_contact_name_e3ee2f6b")
+  @@index([name], map: "clients_contact_name_e3ee2f6b_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model clients_contact_clients {
+  id              Int             @id @default(autoincrement())
+  contact_id      Int
+  client_id       Int
+  clients_contact clients_contact @relation(fields: [contact_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "clients_contact_clie_contact_id_b3902f52_fk_clients_c")
+  clients_client  clients_client  @relation(fields: [client_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "clients_contact_clients_client_id_c89ce731_fk_clients_client_id")
+
+  @@unique([contact_id, client_id], map: "clients_contact_clients_contact_id_client_id_2f035ae9_uniq")
+  @@index([client_id], map: "clients_contact_clients_client_id_c89ce731")
+  @@index([contact_id], map: "clients_contact_clients_contact_id_b3902f52")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model common_errorlogentry {
+  id                  Int                  @id @default(autoincrement())
+  namespace           String               @db.VarChar(128)
+  object_id           Int?
+  datetime            DateTime             @db.Timestamptz(6)
+  result              String?
+  content_type_id     Int?
+  django_content_type django_content_type? @relation(fields: [content_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "common_errorlogentry_content_type_id_83b13b7c_fk_django_co")
+
+  @@index([content_type_id], map: "common_errorlogentry_content_type_id_83b13b7c")
+  @@index([datetime], map: "common_errorlogentry_datetime_0e0dd691")
+}
+
+model common_shareduploadedfile {
+  id                   Int                    @id @default(autoincrement())
+  file                 String                 @db.VarChar(100)
+  filename             String                 @db.VarChar(255)
+  datetime             DateTime               @db.Timestamptz(6)
+  sapitwa_tempdocument sapitwa_tempdocument[]
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model common_userlocaleprofile {
+  id        Int       @id @default(autoincrement())
+  timezone  String    @db.VarChar(48)
+  language  String    @db.VarChar(8)
+  user_id   Int       @unique
+  auth_user auth_user @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "common_userlocaleprofile_user_id_1984958f_fk_auth_user_id")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model converter_transformation {
+  id                  Int                 @id @default(autoincrement())
+  object_id           Int
+  order               Int
+  name                String              @db.VarChar(128)
+  arguments           String
+  content_type_id     Int
+  django_content_type django_content_type @relation(fields: [content_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "converter_transforma_content_type_id_28500072_fk_django_co")
+
+  @@unique([content_type_id, object_id, order], map: "converter_transformation_content_type_id_object_i_0960d9d2_uniq")
+  @@index([content_type_id], map: "converter_transformation_content_type_id_28500072")
+  @@index([order], map: "converter_transformation_order_32d4e275")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model django_admin_log {
+  id                  Int                  @id @default(autoincrement())
+  action_time         DateTime             @db.Timestamptz(6)
+  object_id           String?
+  object_repr         String               @db.VarChar(200)
+  action_flag         Int                  @db.SmallInt
+  change_message      String
+  content_type_id     Int?
+  user_id             Int
+  django_content_type django_content_type? @relation(fields: [content_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "django_admin_log_content_type_id_c4bce8eb_fk_django_co")
+  auth_user           auth_user            @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "django_admin_log_user_id_c564eba6_fk_auth_user_id")
+
+  @@index([content_type_id], map: "django_admin_log_content_type_id_c4bce8eb")
+  @@index([user_id], map: "django_admin_log_user_id_c564eba6")
+}
+
+model django_content_type {
+  id                                                                                   Int                              @id @default(autoincrement())
+  app_label                                                                            String                           @db.VarChar(100)
+  model                                                                                String                           @db.VarChar(100)
+  acls_accesscontrollist                                                               acls_accesscontrollist[]
+  actstream_action_actstream_action_action_object_content_type_idTodjango_content_type actstream_action[]               @relation("actstream_action_action_object_content_type_idTodjango_content_type")
+  actstream_action_actstream_action_actor_content_type_idTodjango_content_type         actstream_action[]               @relation("actstream_action_actor_content_type_idTodjango_content_type")
+  actstream_action_actstream_action_target_content_type_idTodjango_content_type        actstream_action[]               @relation("actstream_action_target_content_type_idTodjango_content_type")
+  actstream_follow                                                                     actstream_follow[]
+  auth_permission                                                                      auth_permission[]
+  common_errorlogentry                                                                 common_errorlogentry[]
+  converter_transformation                                                             converter_transformation[]
+  django_admin_log                                                                     django_admin_log[]
+  events_objecteventsubscription                                                       events_objecteventsubscription[]
+
+  @@unique([app_label, model], map: "django_content_type_app_label_model_76bd3d3b_uniq")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model django_gpg_key {
+  id              Int       @id @default(autoincrement())
+  creation_date   DateTime  @db.Date
+  expiration_date DateTime? @db.Date
+  fingerprint     String    @unique @db.VarChar(40)
+  length          Int
+  algorithm       Int
+  user_id         String
+  key_type        String    @db.VarChar(3)
+  key_data        String
+
+  @@index([fingerprint], map: "django_gpg_key_fingerprint_27c33b0e_like")
+}
+
+model django_migrations {
+  id      Int      @id @default(autoincrement())
+  app     String   @db.VarChar(255)
+  name    String   @db.VarChar(255)
+  applied DateTime @db.Timestamptz(6)
+}
+
+model django_session {
+  session_key  String   @id @db.VarChar(40)
+  session_data String
+  expire_date  DateTime @db.Timestamptz(6)
+
+  @@index([expire_date], map: "django_session_expire_date_a5c62663")
+  @@index([session_key], map: "django_session_session_key_c0390e0f_like")
+}
+
+model django_site {
+  id     Int    @id @default(autoincrement())
+  domain String @unique(map: "django_site_domain_a2e37b91_uniq") @db.VarChar(100)
+  name   String @db.VarChar(50)
+
+  @@index([domain], map: "django_site_domain_a2e37b91_like")
+}
+
+model djcelery_crontabschedule {
+  id                    Int                     @id @default(autoincrement())
+  minute                String                  @db.VarChar(64)
+  hour                  String                  @db.VarChar(64)
+  day_of_week           String                  @db.VarChar(64)
+  day_of_month          String                  @db.VarChar(64)
+  month_of_year         String                  @db.VarChar(64)
+  djcelery_periodictask djcelery_periodictask[]
+}
+
+model djcelery_intervalschedule {
+  id                    Int                     @id @default(autoincrement())
+  every                 Int
+  period                String                  @db.VarChar(24)
+  djcelery_periodictask djcelery_periodictask[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model djcelery_periodictask {
+  id                        Int                        @id @default(autoincrement())
+  name                      String                     @unique @db.VarChar(200)
+  task                      String                     @db.VarChar(200)
+  args                      String
+  kwargs                    String
+  queue                     String?                    @db.VarChar(200)
+  exchange                  String?                    @db.VarChar(200)
+  routing_key               String?                    @db.VarChar(200)
+  expires                   DateTime?                  @db.Timestamptz(6)
+  enabled                   Boolean
+  last_run_at               DateTime?                  @db.Timestamptz(6)
+  total_run_count           Int
+  date_changed              DateTime                   @db.Timestamptz(6)
+  description               String
+  crontab_id                Int?
+  interval_id               Int?
+  djcelery_crontabschedule  djcelery_crontabschedule?  @relation(fields: [crontab_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "djcelery_periodictas_crontab_id_75609bab_fk_djcelery_")
+  djcelery_intervalschedule djcelery_intervalschedule? @relation(fields: [interval_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "djcelery_periodictas_interval_id_b426ab02_fk_djcelery_")
+
+  @@index([crontab_id], map: "djcelery_periodictask_crontab_id_75609bab")
+  @@index([interval_id], map: "djcelery_periodictask_interval_id_b426ab02")
+  @@index([name], map: "djcelery_periodictask_name_cb62cda9_like")
+}
+
+model djcelery_periodictasks {
+  ident       Int      @id @db.SmallInt
+  last_update DateTime @db.Timestamptz(6)
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model djcelery_taskstate {
+  id                   Int                   @id @default(autoincrement())
+  state                String                @db.VarChar(64)
+  task_id              String                @unique @db.VarChar(36)
+  name                 String?               @db.VarChar(200)
+  tstamp               DateTime              @db.Timestamptz(6)
+  args                 String?
+  kwargs               String?
+  eta                  DateTime?             @db.Timestamptz(6)
+  expires              DateTime?             @db.Timestamptz(6)
+  result               String?
+  traceback            String?
+  runtime              Float?
+  retries              Int
+  hidden               Boolean
+  worker_id            Int?
+  djcelery_workerstate djcelery_workerstate? @relation(fields: [worker_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "djcelery_taskstate_worker_id_f7f57a05_fk_djcelery_")
+
+  @@index([hidden], map: "djcelery_taskstate_hidden_c3905e57")
+  @@index([name], map: "djcelery_taskstate_name_8af9eded")
+  @@index([name], map: "djcelery_taskstate_name_8af9eded_like")
+  @@index([state], map: "djcelery_taskstate_state_53543be4")
+  @@index([state], map: "djcelery_taskstate_state_53543be4_like")
+  @@index([task_id], map: "djcelery_taskstate_task_id_9d2efdb5_like")
+  @@index([tstamp], map: "djcelery_taskstate_tstamp_4c3f93a1")
+  @@index([worker_id], map: "djcelery_taskstate_worker_id_f7f57a05")
+}
+
+model djcelery_workerstate {
+  id                 Int                  @id @default(autoincrement())
+  hostname           String               @unique @db.VarChar(255)
+  last_heartbeat     DateTime?            @db.Timestamptz(6)
+  djcelery_taskstate djcelery_taskstate[]
+
+  @@index([hostname], map: "djcelery_workerstate_hostname_b31c7fab_like")
+  @@index([last_heartbeat], map: "djcelery_workerstate_last_heartbeat_4539b544")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model document_comments_comment {
+  id                 Int                @id @default(autoincrement())
+  comment            String
+  submit_date        DateTime           @db.Timestamptz(6)
+  document_id        Int
+  user_id            Int
+  documents_document documents_document @relation(fields: [document_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_comments_co_document_id_2435cfe5_fk_documents")
+  auth_user          auth_user          @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_comments_comment_user_id_cfa5a004_fk_auth_user_id")
+
+  @@index([document_id], map: "document_comments_comment_document_id_2435cfe5")
+  @@index([submit_date], map: "document_comments_comment_submit_date_c3c6a9cc")
+  @@index([user_id], map: "document_comments_comment_user_id_cfa5a004")
+}
+
+model document_indexing_index {
+  id                                     Int                                      @id @default(autoincrement())
+  label                                  String                                   @unique(map: "document_indexing_index_title_key") @db.VarChar(128)
+  enabled                                Boolean
+  slug                                   String                                   @unique @db.VarChar(128)
+  document_indexing_index_document_types document_indexing_index_document_types[]
+  document_indexing_indextemplatenode    document_indexing_indextemplatenode[]
+
+  @@index([slug], map: "document_indexing_index_slug_5035d0c5_like")
+  @@index([label], map: "document_indexing_index_title_ad7a9765_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model document_indexing_index_document_types {
+  id                      Int                     @id @default(autoincrement())
+  index_id                Int
+  documenttype_id         Int
+  documents_documenttype  documents_documenttype  @relation(fields: [documenttype_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_indexing_in_documenttype_id_e787546a_fk_documents")
+  document_indexing_index document_indexing_index @relation(fields: [index_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_indexing_in_index_id_bb64891c_fk_document_")
+
+  @@unique([index_id, documenttype_id], map: "document_indexing_index__index_id_documenttype_id_191c4d4b_uniq")
+  @@index([documenttype_id], map: "document_indexing_index_document_types_documenttype_id_e787546a")
+  @@index([index_id], map: "document_indexing_index_document_types_index_id_bb64891c")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model document_indexing_indexinstancenode {
+  id                                            Int                                             @id @default(autoincrement())
+  value                                         String                                          @db.VarChar(256)
+  lft                                           Int
+  rght                                          Int
+  tree_id                                       Int
+  level                                         Int
+  index_template_node_id                        Int
+  parent_id                                     Int?
+  document_indexing_indextemplatenode           document_indexing_indextemplatenode             @relation(fields: [index_template_node_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_indexing_in_index_template_node__366c4e5a_fk_document_")
+  document_indexing_indexinstancenode           document_indexing_indexinstancenode?            @relation("document_indexing_indexinstancenodeTodocument_indexing_indexinstancenode", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_indexing_in_parent_id_3db469f0_fk_document_")
+  other_document_indexing_indexinstancenode     document_indexing_indexinstancenode[]           @relation("document_indexing_indexinstancenodeTodocument_indexing_indexinstancenode")
+  document_indexing_indexinstancenode_documents document_indexing_indexinstancenode_documents[]
+
+  @@index([index_template_node_id], map: "document_indexing_indexins_index_template_node_id_366c4e5a")
+  @@index([level], map: "document_indexing_indexinstancenode_level_c1e3ec76")
+  @@index([lft], map: "document_indexing_indexinstancenode_lft_33aa9645")
+  @@index([parent_id], map: "document_indexing_indexinstancenode_parent_id_3db469f0")
+  @@index([rght], map: "document_indexing_indexinstancenode_rght_dc583354")
+  @@index([tree_id], map: "document_indexing_indexinstancenode_tree_id_4b10b72a")
+  @@index([value], map: "document_indexing_indexinstancenode_value_cf7fc740")
+  @@index([value], map: "document_indexing_indexinstancenode_value_cf7fc740_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model document_indexing_indexinstancenode_documents {
+  id                                  Int                                 @id @default(autoincrement())
+  indexinstancenode_id                Int
+  document_id                         Int
+  documents_document                  documents_document                  @relation(fields: [document_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_indexing_in_document_id_01ea67cd_fk_documents")
+  document_indexing_indexinstancenode document_indexing_indexinstancenode @relation(fields: [indexinstancenode_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_indexing_in_indexinstancenode_id_9f4e413e_fk_document_")
+
+  @@unique([indexinstancenode_id, document_id], map: "document_indexing_indexi_indexinstancenode_id_doc_6bb4c624_uniq")
+  @@index([document_id], map: "document_indexing_indexins_document_id_01ea67cd")
+  @@index([indexinstancenode_id], map: "document_indexing_indexins_indexinstancenode_id_9f4e413e")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model document_indexing_indextemplatenode {
+  id                                        Int                                   @id @default(autoincrement())
+  expression                                String
+  enabled                                   Boolean
+  link_documents                            Boolean
+  lft                                       Int
+  rght                                      Int
+  tree_id                                   Int
+  level                                     Int
+  index_id                                  Int
+  parent_id                                 Int?
+  document_indexing_indexinstancenode       document_indexing_indexinstancenode[]
+  document_indexing_index                   document_indexing_index               @relation(fields: [index_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_indexing_in_index_id_1a5de5b2_fk_document_")
+  document_indexing_indextemplatenode       document_indexing_indextemplatenode?  @relation("document_indexing_indextemplatenodeTodocument_indexing_indextemplatenode", fields: [parent_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_indexing_in_parent_id_27089927_fk_document_")
+  other_document_indexing_indextemplatenode document_indexing_indextemplatenode[] @relation("document_indexing_indextemplatenodeTodocument_indexing_indextemplatenode")
+
+  @@index([index_id], map: "document_indexing_indextemplatenode_index_id_1a5de5b2")
+  @@index([level], map: "document_indexing_indextemplatenode_level_7159822d")
+  @@index([lft], map: "document_indexing_indextemplatenode_lft_d5f4713f")
+  @@index([parent_id], map: "document_indexing_indextemplatenode_parent_id_27089927")
+  @@index([rght], map: "document_indexing_indextemplatenode_rght_9cea0bfd")
+  @@index([tree_id], map: "document_indexing_indextemplatenode_tree_id_36218774")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model document_parsing_documentpagecontent {
+  id                     Int                    @id @default(autoincrement())
+  content                String
+  document_page_id       Int                    @unique
+  documents_documentpage documents_documentpage @relation(fields: [document_page_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_parsing_doc_document_page_id_ad640195_fk_documents")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model document_parsing_documenttypesettings {
+  id                     Int                    @id @default(autoincrement())
+  auto_parsing           Boolean
+  document_type_id       Int                    @unique
+  documents_documenttype documents_documenttype @relation(fields: [document_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_parsing_doc_document_type_id_0fda62d1_fk_documents")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model document_parsing_documentversionparseerror {
+  id                        Int                       @id @default(autoincrement())
+  datetime_submitted        DateTime                  @db.Timestamptz(6)
+  result                    String?
+  document_version_id       Int
+  documents_documentversion documents_documentversion @relation(fields: [document_version_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_parsing_doc_document_version_id_841beea8_fk_documents")
+
+  @@index([datetime_submitted], map: "document_parsing_documentv_datetime_submitted_deb1855c")
+  @@index([document_version_id], map: "document_parsing_documentv_document_version_id_841beea8")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model document_signatures_detachedsignature {
+  signaturebasemodel_ptr_id              Int                                    @id
+  signature_file                         String?                                @db.VarChar(100)
+  document_signatures_signaturebasemodel document_signatures_signaturebasemodel @relation(fields: [signaturebasemodel_ptr_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_signatures__signaturebasemodel_p_65562ebb_fk_document_")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model document_signatures_embeddedsignature {
+  signaturebasemodel_ptr_id              Int                                    @id
+  document_signatures_signaturebasemodel document_signatures_signaturebasemodel @relation(fields: [signaturebasemodel_ptr_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_signatures__signaturebasemodel_p_59013208_fk_document_")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model document_signatures_signaturebasemodel {
+  id                                    Int                                    @id @default(autoincrement())
+  date                                  DateTime?                              @db.Date
+  key_id                                String                                 @db.VarChar(40)
+  signature_id                          String?                                @db.VarChar(64)
+  public_key_fingerprint                String?                                @db.VarChar(40)
+  document_version_id                   Int
+  document_signatures_detachedsignature document_signatures_detachedsignature?
+  document_signatures_embeddedsignature document_signatures_embeddedsignature?
+  documents_documentversion             documents_documentversion              @relation(fields: [document_version_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_signatures__document_version_id_28d20aa3_fk_documents")
+
+  @@index([document_version_id], map: "document_signatures_signat_document_version_id_28d20aa3")
+}
+
+model document_states_workflow {
+  id                                      Int                                       @id @default(autoincrement())
+  label                                   String                                    @unique @db.VarChar(255)
+  internal_name                           String                                    @unique(map: "document_states_workflow_internal_name_2fd8e536_uniq") @db.VarChar(255)
+  document_states_workflow_document_types document_states_workflow_document_types[]
+  document_states_workflowinstance        document_states_workflowinstance[]
+  document_states_workflowstate           document_states_workflowstate[]
+  document_states_workflowtransition      document_states_workflowtransition[]
+
+  @@index([internal_name], map: "document_states_workflow_internal_name_2fd8e536_like")
+  @@index([label], map: "document_states_workflow_label_1f73c1a4_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model document_states_workflow_document_types {
+  id                       Int                      @id @default(autoincrement())
+  workflow_id              Int
+  documenttype_id          Int
+  documents_documenttype   documents_documenttype   @relation(fields: [documenttype_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_states_work_documenttype_id_d68c08bd_fk_documents")
+  document_states_workflow document_states_workflow @relation(fields: [workflow_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_states_work_workflow_id_b1dfb20a_fk_document_")
+
+  @@unique([workflow_id, documenttype_id], map: "document_states_workflow_workflow_id_documenttype_1ae46739_uniq")
+  @@index([documenttype_id], map: "document_states_workflow_d_documenttype_id_d68c08bd")
+  @@index([workflow_id], map: "document_states_workflow_document_types_workflow_id_b1dfb20a")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model document_states_workflowinstance {
+  id                                       Int                                        @id @default(autoincrement())
+  document_id                              Int
+  workflow_id                              Int
+  documents_document                       documents_document                         @relation(fields: [document_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_states_work_document_id_61923007_fk_documents")
+  document_states_workflow                 document_states_workflow                   @relation(fields: [workflow_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_states_work_workflow_id_41b3b62c_fk_document_")
+  document_states_workflowinstancelogentry document_states_workflowinstancelogentry[]
+
+  @@unique([document_id, workflow_id], map: "document_states_workflow_document_id_workflow_id_e7ebd6de_uniq")
+  @@index([document_id], map: "document_states_workflowinstance_document_id_61923007")
+  @@index([workflow_id], map: "document_states_workflowinstance_workflow_id_41b3b62c")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model document_states_workflowinstancelogentry {
+  id                                 Int                                @id @default(autoincrement())
+  datetime                           DateTime                           @db.Timestamptz(6)
+  comment                            String
+  transition_id                      Int
+  user_id                            Int?
+  workflow_instance_id               Int
+  document_states_workflowtransition document_states_workflowtransition @relation(fields: [transition_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_states_work_transition_id_dbc22ff8_fk_document_")
+  auth_user                          auth_user?                         @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_states_work_user_id_a4e95628_fk_auth_user")
+  document_states_workflowinstance   document_states_workflowinstance   @relation(fields: [workflow_instance_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_states_work_workflow_instance_id_33bbb3e4_fk_document_")
+
+  @@index([workflow_instance_id], map: "document_states_workflowin_workflow_instance_id_33bbb3e4")
+  @@index([datetime], map: "document_states_workflowinstancelogentry_datetime_71aa06ef")
+  @@index([transition_id], map: "document_states_workflowinstancelogentry_transition_id_dbc22ff8")
+  @@index([user_id], map: "document_states_workflowinstancelogentry_user_id_a4e95628")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model document_states_workflowstate {
+  id                                                                                                                        Int                                   @id @default(autoincrement())
+  label                                                                                                                     String                                @db.VarChar(255)
+  initial                                                                                                                   Boolean
+  workflow_id                                                                                                               Int
+  completion                                                                                                                Int
+  document_states_workflow                                                                                                  document_states_workflow              @relation(fields: [workflow_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_states_work_workflow_id_83e30228_fk_document_")
+  document_states_workflowstateaction                                                                                       document_states_workflowstateaction[]
+  document_states_workflowtransition_document_states_workflowtransition_destination_state_idTodocument_states_workflowstate document_states_workflowtransition[]  @relation("document_states_workflowtransition_destination_state_idTodocument_states_workflowstate")
+  document_states_workflowtransition_document_states_workflowtransition_origin_state_idTodocument_states_workflowstate      document_states_workflowtransition[]  @relation("document_states_workflowtransition_origin_state_idTodocument_states_workflowstate")
+
+  @@unique([workflow_id, label], map: "document_states_workflowstate_workflow_id_label_3bfff872_uniq")
+  @@index([workflow_id], map: "document_states_workflowstate_workflow_id_83e30228")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model document_states_workflowstateaction {
+  id                            Int                           @id @default(autoincrement())
+  label                         String                        @db.VarChar(255)
+  enabled                       Boolean
+  when                          Int
+  action_path                   String                        @db.VarChar(128)
+  action_data                   String
+  state_id                      Int
+  document_states_workflowstate document_states_workflowstate @relation(fields: [state_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_states_work_state_id_0a0fa8cf_fk_document_")
+
+  @@unique([state_id, label], map: "document_states_workflow_state_id_label_f489b938_uniq")
+  @@index([state_id], map: "document_states_workflowstateaction_state_id_0a0fa8cf")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model document_states_workflowtransition {
+  id                                                                                                                   Int                                              @id @default(autoincrement())
+  label                                                                                                                String                                           @db.VarChar(255)
+  destination_state_id                                                                                                 Int
+  origin_state_id                                                                                                      Int
+  workflow_id                                                                                                          Int
+  document_states_workflowinstancelogentry                                                                             document_states_workflowinstancelogentry[]
+  document_states_workflowstate_document_states_workflowtransition_destination_state_idTodocument_states_workflowstate document_states_workflowstate                    @relation("document_states_workflowtransition_destination_state_idTodocument_states_workflowstate", fields: [destination_state_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_states_work_destination_state_id_3dfa519e_fk_document_")
+  document_states_workflowstate_document_states_workflowtransition_origin_state_idTodocument_states_workflowstate      document_states_workflowstate                    @relation("document_states_workflowtransition_origin_state_idTodocument_states_workflowstate", fields: [origin_state_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_states_work_origin_state_id_7f22d544_fk_document_")
+  document_states_workflow                                                                                             document_states_workflow                         @relation(fields: [workflow_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_states_work_workflow_id_76c0f75a_fk_document_")
+  document_states_workflowtransitiontriggerevent                                                                       document_states_workflowtransitiontriggerevent[]
+
+  @@unique([workflow_id, label, origin_state_id, destination_state_id], map: "document_states_workflow_workflow_id_label_origin_b75b400d_uniq")
+  @@index([destination_state_id], map: "document_states_workflowtr_destination_state_id_3dfa519e")
+  @@index([origin_state_id], map: "document_states_workflowtransition_origin_state_id_7f22d544")
+  @@index([workflow_id], map: "document_states_workflowtransition_workflow_id_76c0f75a")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model document_states_workflowtransitiontriggerevent {
+  id                                 Int                                @id @default(autoincrement())
+  event_type_id                      Int
+  transition_id                      Int
+  events_storedeventtype             events_storedeventtype             @relation(fields: [event_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_states_work_event_type_id_5a1f23db_fk_events_st")
+  document_states_workflowtransition document_states_workflowtransition @relation(fields: [transition_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_states_work_transition_id_a56afcf3_fk_document_")
+
+  @@index([event_type_id], map: "document_states_workflowtr_stored_event_type_id_49b93af2")
+  @@index([transition_id], map: "document_states_workflowtr_transition_id_a56afcf3")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model documents_document {
+  id                                            Int                                             @id @default(autoincrement())
+  uuid                                          String                                          @db.Uuid
+  label                                         String                                          @db.VarChar(255)
+  description                                   String
+  date_added                                    DateTime                                        @db.Timestamptz(6)
+  language                                      String                                          @db.VarChar(8)
+  document_type_id                              Int
+  in_trash                                      Boolean
+  deleted_date_time                             DateTime?                                       @db.Timestamptz(6)
+  is_stub                                       Boolean
+  cabinets_cabinet_documents                    cabinets_cabinet_documents[]
+  checkouts_documentcheckout                    checkouts_documentcheckout?
+  checkouts_newversionblock                     checkouts_newversionblock[]
+  document_comments_comment                     document_comments_comment[]
+  document_indexing_indexinstancenode_documents document_indexing_indexinstancenode_documents[]
+  document_states_workflowinstance              document_states_workflowinstance[]
+  documents_documenttype                        documents_documenttype                          @relation(fields: [document_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "documents_document_document_type_id_1f88b50c_fk_documents")
+  documents_documentversion                     documents_documentversion[]
+  documents_duplicateddocument                  documents_duplicateddocument[]
+  documents_duplicateddocument_documents        documents_duplicateddocument_documents[]
+  documents_favoritedocument                    documents_favoritedocument[]
+  documents_recentdocument                      documents_recentdocument[]
+  metadata_documentmetadata                     metadata_documentmetadata[]
+  register_quotation_documents                  register_quotation_documents[]
+  register_register_documents                   register_register_documents[]
+  sapitwa_tempdocument                          sapitwa_tempdocument[]
+  tags_tag_documents                            tags_tag_documents[]
+
+  @@index([date_added], map: "documents_document_date_added_873349cc")
+  @@index([document_type_id], map: "documents_document_document_type_id_1f88b50c")
+  @@index([in_trash], map: "documents_document_in_trash_99a07799")
+  @@index([is_stub], map: "documents_document_is_stub_7a1cdd11")
+  @@index([label], map: "documents_document_label_556c6583")
+  @@index([label], map: "documents_document_label_556c6583_like")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model documents_documentpage {
+  id                                   Int                                   @id @default(autoincrement())
+  page_number                          Int
+  document_version_id                  Int
+  document_parsing_documentpagecontent document_parsing_documentpagecontent?
+  documents_documentversion            documents_documentversion             @relation(fields: [document_version_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "documents_documentpa_document_version_id_5d1c2629_fk_documents")
+  documents_documentpagecachedimage    documents_documentpagecachedimage[]
+  ocr_documentpageocrcontent           ocr_documentpageocrcontent?
+
+  @@index([document_version_id], map: "documents_documentpage_document_version_id_5d1c2629")
+  @@index([page_number], map: "documents_documentpage_page_number_a0e30237")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model documents_documentpagecachedimage {
+  id                     Int                    @id @default(autoincrement())
+  filename               String                 @db.VarChar(128)
+  document_page_id       Int
+  datetime               DateTime               @db.Timestamptz(6)
+  file_size              Int
+  documents_documentpage documents_documentpage @relation(fields: [document_page_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "documents_documentpa_document_page_id_74c2cc5e_fk_documents")
+
+  @@index([datetime], map: "documents_documentpagecachedimage_datetime_b8ac949d")
+  @@index([document_page_id], map: "documents_documentpagecachedimage_document_page_id_74c2cc5e")
+  @@index([file_size], map: "documents_documentpagecachedimage_file_size_8324abb5")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model documents_documenttype {
+  id                                      Int                                       @id @default(autoincrement())
+  label                                   String                                    @unique(map: "documents_documenttype_name_key") @db.VarChar(96)
+  delete_time_period                      Int?
+  delete_time_unit                        String?                                   @db.VarChar(8)
+  trash_time_period                       Int?
+  trash_time_unit                         String?                                   @db.VarChar(8)
+  document_indexing_index_document_types  document_indexing_index_document_types[]
+  document_parsing_documenttypesettings   document_parsing_documenttypesettings?
+  document_states_workflow_document_types document_states_workflow_document_types[]
+  documents_document                      documents_document[]
+  documents_documenttypefilename          documents_documenttypefilename[]
+  linking_smartlink_document_types        linking_smartlink_document_types[]
+  metadata_documenttypemetadatatype       metadata_documenttypemetadatatype[]
+  ocr_documenttypesettings                ocr_documenttypesettings?
+  sapitwa_tempdocument                    sapitwa_tempdocument[]
+  sources_intervalbasemodel               sources_intervalbasemodel[]
+
+  @@index([label], map: "documents_documenttype_name_c2bc4c08_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model documents_documenttypefilename {
+  id                     Int                    @id @default(autoincrement())
+  filename               String                 @db.VarChar(128)
+  enabled                Boolean
+  document_type_id       Int
+  documents_documenttype documents_documenttype @relation(fields: [document_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "documents_documentty_document_type_id_56f21f7f_fk_documents")
+
+  @@unique([document_type_id, filename], map: "documents_documenttypefi_document_type_id_filenam_cffa5dbb_uniq")
+  @@index([document_type_id], map: "documents_documenttypefilename_document_type_id_56f21f7f")
+  @@index([filename], map: "documents_documenttypefilename_filename_15dfc133")
+  @@index([filename], map: "documents_documenttypefilename_filename_15dfc133_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model documents_documentversion {
+  id                                         Int                                          @id @default(autoincrement())
+  timestamp                                  DateTime                                     @db.Timestamptz(6)
+  comment                                    String
+  file                                       String                                       @db.VarChar(100)
+  mimetype                                   String?                                      @db.VarChar(255)
+  encoding                                   String?                                      @db.VarChar(64)
+  checksum                                   String?                                      @db.VarChar(64)
+  document_id                                Int
+  document_parsing_documentversionparseerror document_parsing_documentversionparseerror[]
+  document_signatures_signaturebasemodel     document_signatures_signaturebasemodel[]
+  documents_documentpage                     documents_documentpage[]
+  documents_document                         documents_document                           @relation(fields: [document_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "documents_documentve_document_id_42757b7a_fk_documents")
+  ocr_documentversionocrerror                ocr_documentversionocrerror[]
+
+  @@index([checksum], map: "documents_documentversion_checksum_474801cd")
+  @@index([checksum], map: "documents_documentversion_checksum_474801cd_like")
+  @@index([document_id], map: "documents_documentversion_document_id_42757b7a")
+  @@index([timestamp], map: "documents_documentversion_timestamp_30bada95")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model documents_duplicateddocument {
+  id                                     Int                                      @id @default(autoincrement())
+  datetime_added                         DateTime                                 @db.Timestamptz(6)
+  document_id                            Int
+  documents_document                     documents_document                       @relation(fields: [document_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "documents_duplicated_document_id_67eaf8d5_fk_documents")
+  documents_duplicateddocument_documents documents_duplicateddocument_documents[]
+
+  @@index([datetime_added], map: "documents_duplicateddocument_datetime_added_0a24d765")
+  @@index([document_id], map: "documents_duplicateddocument_document_id_67eaf8d5")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model documents_duplicateddocument_documents {
+  id                           Int                          @id @default(autoincrement())
+  duplicateddocument_id        Int
+  document_id                  Int
+  documents_document           documents_document           @relation(fields: [document_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "documents_duplicated_document_id_74a2ee3c_fk_documents")
+  documents_duplicateddocument documents_duplicateddocument @relation(fields: [duplicateddocument_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "documents_duplicated_duplicateddocument_i_cfed041b_fk_documents")
+
+  @@unique([duplicateddocument_id, document_id], map: "documents_duplicateddocu_duplicateddocument_id_do_57806cab_uniq")
+  @@index([duplicateddocument_id], map: "documents_duplicateddocume_duplicateddocument_id_cfed041b")
+  @@index([document_id], map: "documents_duplicateddocument_documents_document_id_74a2ee3c")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model documents_favoritedocument {
+  id                 Int                @id @default(autoincrement())
+  document_id        Int
+  user_id            Int
+  documents_document documents_document @relation(fields: [document_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "documents_favoritedo_document_id_0ea7eea9_fk_documents")
+  auth_user          auth_user          @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "documents_favoritedocument_user_id_d10ba5d2_fk_auth_user_id")
+
+  @@index([document_id], map: "documents_favoritedocument_document_id_0ea7eea9")
+  @@index([user_id], map: "documents_favoritedocument_user_id_d10ba5d2")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model documents_recentdocument {
+  id                 Int                @id @default(autoincrement())
+  datetime_accessed  DateTime           @db.Timestamptz(6)
+  document_id        Int
+  user_id            Int
+  documents_document documents_document @relation(fields: [document_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "documents_recentdocu_document_id_cbe05f47_fk_documents")
+  auth_user          auth_user          @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "documents_recentdocument_user_id_705045b9_fk_auth_user_id")
+
+  @@index([datetime_accessed], map: "documents_recentdocument_datetime_accessed_46389d04")
+  @@index([document_id], map: "documents_recentdocument_document_id_cbe05f47")
+  @@index([user_id], map: "documents_recentdocument_user_id_705045b9")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model events_eventsubscription {
+  id                     Int                    @id @default(autoincrement())
+  user_id                Int
+  stored_event_type_id   Int
+  events_storedeventtype events_storedeventtype @relation(fields: [stored_event_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "events_eventsubscrip_stored_event_type_id_ba59355c_fk_events_st")
+  auth_user              auth_user              @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "events_eventsubscription_user_id_9394816f_fk_auth_user_id")
+
+  @@index([stored_event_type_id], map: "events_eventsubscription_stored_event_type_id_ba59355c")
+  @@index([user_id], map: "events_eventsubscription_user_id_9394816f")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model events_notification {
+  id               Int              @id @default(autoincrement())
+  read             Boolean
+  action_id        Int
+  user_id          Int
+  actstream_action actstream_action @relation(fields: [action_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "events_notification_action_id_d4f1ce8c_fk_actstream_action_id")
+  auth_user        auth_user        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "events_notification_user_id_4644c4f1_fk_auth_user_id")
+
+  @@index([action_id], map: "events_notification_action_id_d4f1ce8c")
+  @@index([user_id], map: "events_notification_user_id_4644c4f1")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model events_objecteventsubscription {
+  id                     Int                    @id @default(autoincrement())
+  object_id              Int
+  content_type_id        Int
+  stored_event_type_id   Int
+  user_id                Int
+  django_content_type    django_content_type    @relation(fields: [content_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "events_objecteventsu_content_type_id_4f27d971_fk_django_co")
+  events_storedeventtype events_storedeventtype @relation(fields: [stored_event_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "events_objecteventsu_stored_event_type_id_a545d6e2_fk_events_st")
+  auth_user              auth_user              @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "events_objecteventsubscription_user_id_87c8d5cc_fk_auth_user_id")
+
+  @@index([content_type_id], map: "events_objecteventsubscription_content_type_id_4f27d971")
+  @@index([stored_event_type_id], map: "events_objecteventsubscription_stored_event_type_id_a545d6e2")
+  @@index([user_id], map: "events_objecteventsubscription_user_id_87c8d5cc")
+}
+
+model events_storedeventtype {
+  id                                             Int                                              @id(map: "events_eventtype_pkey") @default(autoincrement())
+  name                                           String                                           @unique(map: "events_eventtype_name_key") @db.VarChar(64)
+  document_states_workflowtransitiontriggerevent document_states_workflowtransitiontriggerevent[]
+  events_eventsubscription                       events_eventsubscription[]
+  events_objecteventsubscription                 events_objecteventsubscription[]
+
+  @@index([name], map: "events_eventtype_name_cce2755e_like")
+}
+
+model linking_smartlink {
+  id                               Int                                @id @default(autoincrement())
+  label                            String                             @db.VarChar(96)
+  dynamic_label                    String                             @db.VarChar(96)
+  enabled                          Boolean
+  linking_smartlink_document_types linking_smartlink_document_types[]
+  linking_smartlinkcondition       linking_smartlinkcondition[]
+
+  @@index([label], map: "linking_smartlink_label_3321a5d9")
+  @@index([label], map: "linking_smartlink_label_3321a5d9_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model linking_smartlink_document_types {
+  id                     Int                    @id @default(autoincrement())
+  smartlink_id           Int
+  documenttype_id        Int
+  documents_documenttype documents_documenttype @relation(fields: [documenttype_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "linking_smartlink_do_documenttype_id_4dba045b_fk_documents")
+  linking_smartlink      linking_smartlink      @relation(fields: [smartlink_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "linking_smartlink_do_smartlink_id_a8c9443b_fk_linking_s")
+
+  @@unique([smartlink_id, documenttype_id], map: "linking_smartlink_docume_smartlink_id_documenttyp_962d0f83_uniq")
+  @@index([documenttype_id], map: "linking_smartlink_document_types_documenttype_id_4dba045b")
+  @@index([smartlink_id], map: "linking_smartlink_document_types_smartlink_id_a8c9443b")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model linking_smartlinkcondition {
+  id                    Int               @id @default(autoincrement())
+  inclusion             String            @db.VarChar(16)
+  foreign_document_data String            @db.VarChar(128)
+  operator              String            @db.VarChar(16)
+  expression            String
+  negated               Boolean
+  enabled               Boolean
+  smart_link_id         Int
+  linking_smartlink     linking_smartlink @relation(fields: [smart_link_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "linking_smartlinkcon_smart_link_id_0b7e5753_fk_linking_s")
+
+  @@index([smart_link_id], map: "linking_smartlinkcondition_smart_link_id_0b7e5753")
+}
+
+model lock_manager_lock {
+  id                Int      @id @default(autoincrement())
+  creation_datetime DateTime @db.Timestamptz(6)
+  timeout           Int
+  name              String   @unique @db.VarChar(64)
+
+  @@index([name], map: "lock_manager_lock_name_4a657f6f_like")
+}
+
+model mailer_logentry {
+  id       Int      @id @default(autoincrement())
+  datetime DateTime @db.Timestamptz(6)
+  message  String
+}
+
+model mailer_usermailer {
+  id                        Int                         @id @default(autoincrement())
+  label                     String                      @unique @db.VarChar(128)
+  default                   Boolean
+  backend_path              String                      @db.VarChar(128)
+  backend_data              String
+  enabled                   Boolean
+  signature                 String
+  mailer_usermailerlogentry mailer_usermailerlogentry[]
+
+  @@index([label], map: "mailer_usermailer_label_ceb2d326_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model mailer_usermailerlogentry {
+  id                Int               @id @default(autoincrement())
+  datetime          DateTime          @db.Timestamptz(6)
+  message           String
+  user_mailer_id    Int
+  mailer_usermailer mailer_usermailer @relation(fields: [user_mailer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mailer_usermailerlog_user_mailer_id_ad4f227e_fk_mailer_us")
+
+  @@index([user_mailer_id], map: "mailer_usermailerlogentry_user_mailer_id_ad4f227e")
+}
+
+model mayan_statistics_statisticresult {
+  id             Int      @id @default(autoincrement())
+  slug           String   @db.VarChar(50)
+  datetime       DateTime @db.Timestamptz(6)
+  serialize_data String
+
+  @@index([slug], map: "mayan_statistics_statisticresult_slug_7dded075")
+  @@index([slug], map: "mayan_statistics_statisticresult_slug_7dded075_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model metadata_documentmetadata {
+  id                    Int                   @id @default(autoincrement())
+  value                 String?               @db.VarChar(255)
+  document_id           Int
+  metadata_type_id      Int
+  documents_document    documents_document    @relation(fields: [document_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "metadata_documentmet_document_id_b0b10479_fk_documents")
+  metadata_metadatatype metadata_metadatatype @relation(fields: [metadata_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "metadata_documentmet_metadata_type_id_b3eee3ed_fk_metadata_")
+
+  @@unique([document_id, metadata_type_id], map: "metadata_documentmetadat_document_id_metadata_typ_34933d91_uniq")
+  @@index([document_id], map: "metadata_documentmetadata_document_id_b0b10479")
+  @@index([metadata_type_id], map: "metadata_documentmetadata_metadata_type_id_b3eee3ed")
+  @@index([value], map: "metadata_documentmetadata_value_4125a33a")
+  @@index([value], map: "metadata_documentmetadata_value_4125a33a_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model metadata_documenttypemetadatatype {
+  id                     Int                    @id @default(autoincrement())
+  required               Boolean
+  document_type_id       Int
+  metadata_type_id       Int
+  documents_documenttype documents_documenttype @relation(fields: [document_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "metadata_documenttyp_document_type_id_3cd67d88_fk_documents")
+  metadata_metadatatype  metadata_metadatatype  @relation(fields: [metadata_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "metadata_documenttyp_metadata_type_id_3590987f_fk_metadata_")
+
+  @@unique([document_type_id, metadata_type_id], map: "metadata_documenttypemet_document_type_id_metadat_c88d1cb7_uniq")
+  @@index([document_type_id], map: "metadata_documenttypemetadatatype_document_type_id_3cd67d88")
+  @@index([metadata_type_id], map: "metadata_documenttypemetadatatype_metadata_type_id_3590987f")
+}
+
+model metadata_metadatatype {
+  id                                                                                            Int                                 @id @default(autoincrement())
+  name                                                                                          String                              @unique @db.VarChar(48)
+  label                                                                                         String                              @db.VarChar(48)
+  default                                                                                       String?                             @db.VarChar(128)
+  lookup                                                                                        String?
+  validation                                                                                    String                              @db.VarChar(64)
+  parser                                                                                        String                              @db.VarChar(64)
+  metadata_documentmetadata                                                                     metadata_documentmetadata[]
+  metadata_documenttypemetadatatype                                                             metadata_documenttypemetadatatype[]
+  sources_emailbasemodel_sources_emailbasemodel_from_metadata_type_idTometadata_metadatatype    sources_emailbasemodel[]            @relation("sources_emailbasemodel_from_metadata_type_idTometadata_metadatatype")
+  sources_emailbasemodel_sources_emailbasemodel_subject_metadata_type_idTometadata_metadatatype sources_emailbasemodel[]            @relation("sources_emailbasemodel_subject_metadata_type_idTometadata_metadatatype")
+
+  @@index([name], map: "metadata_metadatatype_name_a23a6d59_like")
+}
+
+model motd_message {
+  id             Int       @id(map: "motd_messageoftheday_pkey") @default(autoincrement())
+  label          String    @db.VarChar(32)
+  message        String
+  enabled        Boolean
+  start_datetime DateTime? @db.Timestamptz(6)
+  end_datetime   DateTime? @db.Timestamptz(6)
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model ocr_documentpageocrcontent {
+  id                     Int                    @id @default(autoincrement())
+  content                String
+  document_page_id       Int                    @unique
+  documents_documentpage documents_documentpage @relation(fields: [document_page_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ocr_documentpageocrc_document_page_id_3b584311_fk_documents")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model ocr_documenttypesettings {
+  id                     Int                    @id @default(autoincrement())
+  auto_ocr               Boolean
+  document_type_id       Int                    @unique
+  documents_documenttype documents_documenttype @relation(fields: [document_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ocr_documenttypesett_document_type_id_33ca6c9c_fk_documents")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model ocr_documentversionocrerror {
+  id                        Int                       @id @default(autoincrement())
+  datetime_submitted        DateTime                  @db.Timestamptz(6)
+  result                    String?
+  document_version_id       Int
+  documents_documentversion documents_documentversion @relation(fields: [document_version_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ocr_documentversiono_document_version_id_153016f5_fk_documents")
+
+  @@index([datetime_submitted], map: "ocr_documentversionocrerror_datetime_submitted_0b142d2e")
+  @@index([document_version_id], map: "ocr_documentversionocrerror_document_version_id_153016f5")
+}
+
+model permissions_role {
+  id                           Int                            @id @default(autoincrement())
+  label                        String                         @unique @db.VarChar(64)
+  role_type                    String                         @db.VarChar(64)
+  acls_accesscontrollist       acls_accesscontrollist[]
+  permissions_role_groups      permissions_role_groups[]
+  permissions_role_permissions permissions_role_permissions[]
+  sapitwa_quotationoptions     sapitwa_quotationoptions[]
+  sapitwa_registeroptions      sapitwa_registeroptions[]
+  sapitwa_tempdocument         sapitwa_tempdocument[]
+
+  @@index([label], map: "permissions_role_label_68a2310e_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model permissions_role_groups {
+  id               Int              @id @default(autoincrement())
+  role_id          Int
+  group_id         Int
+  auth_group       auth_group       @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "permissions_role_groups_group_id_cc37ac20_fk_auth_group_id")
+  permissions_role permissions_role @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "permissions_role_groups_role_id_bd491961_fk_permissions_role_id")
+
+  @@unique([role_id, group_id], map: "permissions_role_groups_role_id_group_id_e958b421_uniq")
+  @@index([group_id], map: "permissions_role_groups_group_id_cc37ac20")
+  @@index([role_id], map: "permissions_role_groups_role_id_bd491961")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model permissions_role_permissions {
+  id                           Int                          @id @default(autoincrement())
+  role_id                      Int
+  storedpermission_id          Int
+  permissions_role             permissions_role             @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "permissions_role_per_role_id_9313389c_fk_permissio")
+  permissions_storedpermission permissions_storedpermission @relation(fields: [storedpermission_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "permissions_role_per_storedpermission_id_8f157086_fk_permissio")
+
+  @@unique([role_id, storedpermission_id], map: "permissions_role_permiss_role_id_storedpermission_d9d895c7_uniq")
+  @@index([role_id], map: "permissions_role_permissions_role_id_9313389c")
+  @@index([storedpermission_id], map: "permissions_role_permissions_storedpermission_id_8f157086")
+}
+
+model permissions_storedpermission {
+  id                                 Int                                  @id @default(autoincrement())
+  namespace                          String                               @db.VarChar(64)
+  name                               String                               @db.VarChar(64)
+  acls_accesscontrollist_permissions acls_accesscontrollist_permissions[]
+  permissions_role_permissions       permissions_role_permissions[]
+
+  @@unique([namespace, name], map: "permissions_storedpermission_namespace_name_fb9a3732_uniq")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model register_activefiletrackingchart {
+  id                                     Int                                      @id(map: "register_transferredregisterfile_pkey") @default(autoincrement())
+  retain_or_transfer                     String                                   @db.VarChar(256)
+  date_closure_letter                    DateTime?                                @db.Date
+  instructions                           DateTime?                                @db.Date
+  date_completion                        DateTime?                                @db.Date
+  notice                                 DateTime?                                @db.Date
+  receipt                                DateTime?                                @db.Date
+  file_to_id                             Int?
+  clients_client                         clients_client?                          @relation(fields: [file_to_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "register_transferred_file_to_id_18747452_fk_clients_c")
+  register_activefiletrackingchart_files register_activefiletrackingchart_files[]
+
+  @@index([file_to_id], map: "register_transferredregisterfile_file_to_id_18747452")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model register_activefiletrackingchart_files {
+  id                               Int                              @id(map: "register_transferredregisterfile_files_pkey") @default(autoincrement())
+  activefiletrackingchart_id       Int
+  register_id                      Int
+  register_activefiletrackingchart register_activefiletrackingchart @relation(fields: [activefiletrackingchart_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "register_activefilet_activefiletrackingch_450ee442_fk_register_")
+  register_register                register_register                @relation(fields: [register_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "register_transferred_register_id_c715f9a5_fk_register_")
+
+  @@unique([activefiletrackingchart_id, register_id], map: "register_transferredregi_transferredregisterfile__1a8d47f0_uniq")
+  @@index([activefiletrackingchart_id], map: "register_transferredregist_transferredregisterfile_id_3164a36b")
+  @@index([register_id], map: "register_transferredregisterfile_files_register_id_c715f9a5")
+}
+
+model register_department {
+  id                Int                 @id @default(autoincrement())
+  name              String              @unique @db.VarChar(256)
+  register_register register_register[]
+
+  @@index([name], map: "register_department_name_7a3156c2_like")
+}
+
+model register_group {
+  id                Int                 @id @default(autoincrement())
+  name              String              @unique @db.VarChar(48)
+  register_register register_register[]
+
+  @@index([name], map: "register_group_name_b962a69c_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model register_quotation {
+  id                           Int                            @id @default(autoincrement())
+  opened                       DateTime                       @db.Timestamptz(6)
+  file_no                      String                         @unique @db.VarChar(128)
+  parties                      String                         @db.VarChar(512)
+  status_old                   String                         @db.VarChar(48)
+  status_id                    Int?
+  register_status              register_status?               @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "register_quotation_status_id_a3dd24d7_fk_register_status_id")
+  register_quotation_documents register_quotation_documents[]
+  sapitwa_tempdocument         sapitwa_tempdocument[]
+
+  @@index([status_id], map: "register_quotation__status_id_f67156e6")
+  @@index([file_no], map: "register_quotation_file_no_e4db85a8_like")
+  @@index([parties], map: "register_quotation_parties_6f5b6119")
+  @@index([parties], map: "register_quotation_parties_6f5b6119_like")
+  @@index([status_old], map: "register_quotation_status_b4ee0f95")
+  @@index([status_old], map: "register_quotation_status_b4ee0f95_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model register_quotation_documents {
+  id                 Int                @id @default(autoincrement())
+  quotation_id       Int
+  document_id        Int
+  documents_document documents_document @relation(fields: [document_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "register_quotation_d_document_id_ece1b133_fk_documents")
+  register_quotation register_quotation @relation(fields: [quotation_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "register_quotation_d_quotation_id_2f7ed1b9_fk_register_")
+
+  @@unique([quotation_id, document_id], map: "register_quotation_docum_quotation_id_document_id_b1cd3796_uniq")
+  @@index([document_id], map: "register_quotation_documents_document_id_ece1b133")
+  @@index([quotation_id], map: "register_quotation_documents_quotation_id_2f7ed1b9")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model register_register {
+  id                                     Int                                      @id @default(autoincrement())
+  opened                                 DateTime                                 @db.Timestamptz(6)
+  file_no                                String                                   @unique @db.VarChar(128)
+  parties                                String                                   @db.VarChar(512)
+  transfer_to                            String                                   @db.VarChar(512)
+  last_status                            String                                   @db.VarChar(48)
+  department_id                          Int?
+  cause_no                               String
+  court                                  String
+  opposing_parties                       String
+  other_parties                          String
+  file_no_bak                            String                                   @map("_file_no_bak") @db.VarChar(128)
+  status_id                              Int?
+  group_id                               Int?
+  physical_file_available                Boolean
+  carton_no                              String                                   @db.VarChar(512)
+  closed                                 DateTime?                                @db.Timestamptz(6)
+  room                                   String                                   @db.VarChar(512)
+  last_activity                          DateTime?                                @db.Timestamptz(6)
+  year_of_destruction                    DateTime?                                @db.Timestamptz(6)
+  retention_period                       String                                   @db.VarChar(512)
+  checklist_registerchecklist            checklist_registerchecklist[]
+  checklist_registertemplateentry        checklist_registertemplateentry[]
+  register_activefiletrackingchart_files register_activefiletrackingchart_files[]
+  register_department                    register_department?                     @relation(fields: [department_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "register_register_department_id_6aacab69_fk_register_")
+  register_group                         register_group?                          @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "register_register_group_id_8f52936a_fk_register_group_id")
+  register_status                        register_status?                         @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "register_register_status_id_879307fe_fk_register_status_id")
+  register_register_clients              register_register_clients[]
+  register_register_contacts             register_register_contacts[]
+  register_register_documents            register_register_documents[]
+  register_register_last_lawyers         register_register_last_lawyers[]
+  register_register_lawyers              register_register_lawyers[]
+  sapitwa_tempdocument                   sapitwa_tempdocument[]
+  tracking_trackedfile                   tracking_trackedfile[]
+
+  @@index([cause_no], map: "register_register_cause_no_9ffc2099")
+  @@index([cause_no], map: "register_register_cause_no_9ffc2099_like")
+  @@index([court], map: "register_register_court_ab615940")
+  @@index([court], map: "register_register_court_ab615940_like")
+  @@index([department_id], map: "register_register_department_id_6aacab69")
+  @@index([file_no], map: "register_register_file_no_da35cbf5_like")
+  @@index([group_id], map: "register_register_group_id_8f52936a")
+  @@index([last_status], map: "register_register_last_status_cbe20766")
+  @@index([last_status], map: "register_register_last_status_cbe20766_like")
+  @@index([parties], map: "register_register_parties_a11957ba")
+  @@index([parties], map: "register_register_parties_a11957ba_like")
+  @@index([status_id], map: "register_register_status_id_879307fe")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model register_register_clients {
+  id                Int               @id @default(autoincrement())
+  register_id       Int
+  client_id         Int
+  clients_client    clients_client    @relation(fields: [client_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "register_register_cl_client_id_95ef1dce_fk_clients_c")
+  register_register register_register @relation(fields: [register_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "register_register_cl_register_id_55b25dea_fk_register_")
+
+  @@unique([register_id, client_id], map: "register_register_clients_register_id_client_id_90a51e87_uniq")
+  @@index([client_id], map: "register_register_clients_client_id_95ef1dce")
+  @@index([register_id], map: "register_register_clients_register_id_55b25dea")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model register_register_contacts {
+  id                Int               @id @default(autoincrement())
+  register_id       Int
+  contact_id        Int
+  clients_contact   clients_contact   @relation(fields: [contact_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "register_register_co_contact_id_bf06304f_fk_clients_c")
+  register_register register_register @relation(fields: [register_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "register_register_co_register_id_a6ff6f95_fk_register_")
+
+  @@unique([register_id, contact_id], map: "register_register_contacts_register_id_contact_id_c9dda8f4_uniq")
+  @@index([contact_id], map: "register_register_contacts_contact_id_bf06304f")
+  @@index([register_id], map: "register_register_contacts_register_id_a6ff6f95")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model register_register_documents {
+  id                 Int                @id @default(autoincrement())
+  register_id        Int
+  document_id        Int
+  documents_document documents_document @relation(fields: [document_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "register_register_do_document_id_de6fe205_fk_documents")
+  register_register  register_register  @relation(fields: [register_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "register_register_do_register_id_4dae19f8_fk_register_")
+
+  @@unique([register_id, document_id], map: "register_register_docume_register_id_document_id_fbaaed8e_uniq")
+  @@index([document_id], map: "register_register_documents_document_id_de6fe205")
+  @@index([register_id], map: "register_register_documents_register_id_4dae19f8")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model register_register_last_lawyers {
+  id                Int               @id @default(autoincrement())
+  register_id       Int
+  user_id           Int
+  register_register register_register @relation(fields: [register_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "register_register_la_register_id_80dfe897_fk_register_")
+  auth_user         auth_user         @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "register_register_last_lawyers_user_id_55bda61b_fk_auth_user_id")
+
+  @@unique([register_id, user_id], map: "register_register_last_l_register_id_user_id_ca7a9e2b_uniq")
+  @@index([register_id], map: "register_register_last_lawyers_register_id_80dfe897")
+  @@index([user_id], map: "register_register_last_lawyers_user_id_55bda61b")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model register_register_lawyers {
+  id                Int               @id @default(autoincrement())
+  register_id       Int
+  user_id           Int
+  register_register register_register @relation(fields: [register_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "register_register_la_register_id_da946a4f_fk_register_")
+  auth_user         auth_user         @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "register_register_lawyers_user_id_89987cad_fk_auth_user_id")
+
+  @@unique([register_id, user_id], map: "register_register_lawyers_register_id_user_id_a3949966_uniq")
+  @@index([register_id], map: "register_register_lawyers_register_id_da946a4f")
+  @@index([user_id], map: "register_register_lawyers_user_id_89987cad")
+}
+
+model register_status {
+  id                 Int                  @id @default(autoincrement())
+  name               String               @db.VarChar(256)
+  background_color   String               @db.VarChar(7)
+  color              String               @db.VarChar(7)
+  register_quotation register_quotation[]
+  register_register  register_register[]
+
+  @@index([name], map: "register_status_name_9eb3c855")
+  @@index([name], map: "register_status_name_9eb3c855_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model sapitwa_listoptions {
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(128)
+  option_list String
+  user_id     Int
+  auth_user   auth_user @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sapitwa_listoptions_user_id_1aabcc2b_fk_auth_user_id")
+
+  @@index([user_id], map: "sapitwa_listoptions_user_id_1aabcc2b")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model sapitwa_quotationoptions {
+  id               Int              @id @default(autoincrement())
+  option_list      String
+  role_id          Int
+  permissions_role permissions_role @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sapitwa_quotationopt_role_id_f29f2217_fk_permissio")
+
+  @@index([role_id], map: "sapitwa_quotationoptions_role_id_f29f2217")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model sapitwa_registeroptions {
+  id               Int              @id @default(autoincrement())
+  option_list      String
+  role_id          Int
+  permissions_role permissions_role @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sapitwa_registeroptions_role_id_008632cf_fk_permissions_role_id")
+
+  @@index([role_id], map: "sapitwa_registeroptions_role_id_008632cf")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model sapitwa_tempdocument {
+  id                        Int                        @id @default(autoincrement())
+  metadata                  String
+  tags                      String
+  permissions               String
+  cabinets                  String
+  last_modified             String
+  label                     String
+  register_no               String
+  document_id               Int?
+  document_type_id          Int?
+  role_id                   Int?
+  uploaded_file_id          Int?
+  user_id                   Int
+  quotation_no              String
+  register_file_id          Int?
+  quotation_file_id         Int?
+  cabinet_id                Int?
+  cabinets_cabinet          cabinets_cabinet?          @relation(fields: [cabinet_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sapitwa_tempdocument_cabinet_id_ae030be3_fk_cabinets_cabinet_id")
+  documents_document        documents_document?        @relation(fields: [document_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sapitwa_tempdocument_document_id_b9e3df8f_fk_documents")
+  documents_documenttype    documents_documenttype?    @relation(fields: [document_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sapitwa_tempdocument_document_type_id_8cebcac2_fk_documents")
+  register_quotation        register_quotation?        @relation(fields: [quotation_file_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sapitwa_tempdocument_quotation_file_id_b5f8768b_fk_register_")
+  register_register         register_register?         @relation(fields: [register_file_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sapitwa_tempdocument_register_file_id_6a1d79b3_fk_register_")
+  permissions_role          permissions_role?          @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sapitwa_tempdocument_role_id_5dda84ce_fk_permissions_role_id")
+  common_shareduploadedfile common_shareduploadedfile? @relation(fields: [uploaded_file_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sapitwa_tempdocument_uploaded_file_id_0a5621cf_fk_common_sh")
+  auth_user                 auth_user                  @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sapitwa_tempdocument_user_id_58b513f2_fk_auth_user_id")
+
+  @@index([cabinet_id], map: "sapitwa_tempdocument_cabinet_id_ae030be3")
+  @@index([document_id], map: "sapitwa_tempdocument_document_id_b9e3df8f")
+  @@index([document_type_id], map: "sapitwa_tempdocument_document_type_id_8cebcac2")
+  @@index([quotation_file_id], map: "sapitwa_tempdocument_quotation_file_id_b5f8768b")
+  @@index([register_file_id], map: "sapitwa_tempdocument_register_file_id_6a1d79b3")
+  @@index([role_id], map: "sapitwa_tempdocument_role_id_5dda84ce")
+  @@index([uploaded_file_id], map: "sapitwa_tempdocument_uploaded_file_id_0a5621cf")
+  @@index([user_id], map: "sapitwa_tempdocument_user_id_58b513f2")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model sapitwa_userstats {
+  id        Int       @id @default(autoincrement())
+  date      DateTime  @db.Date
+  number    Int
+  user_id   Int
+  auth_user auth_user @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sapitwa_userstats_user_id_86906b33_fk_auth_user_id")
+
+  @@index([date], map: "sapitwa_userstats_date_de498707")
+  @@index([user_id], map: "sapitwa_userstats_user_id_86906b33")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model sources_emailbasemodel {
+  intervalbasemodel_ptr_id                                                                     Int                       @id
+  host                                                                                         String                    @db.VarChar(128)
+  ssl                                                                                          Boolean
+  port                                                                                         Int?
+  username                                                                                     String                    @db.VarChar(96)
+  password                                                                                     String                    @db.VarChar(96)
+  metadata_attachment_name                                                                     String                    @db.VarChar(128)
+  from_metadata_type_id                                                                        Int?
+  subject_metadata_type_id                                                                     Int?
+  store_body                                                                                   Boolean
+  metadata_metadatatype_sources_emailbasemodel_from_metadata_type_idTometadata_metadatatype    metadata_metadatatype?    @relation("sources_emailbasemodel_from_metadata_type_idTometadata_metadatatype", fields: [from_metadata_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sources_emailbasemod_from_metadata_type_i_6f5ea19d_fk_metadata_")
+  sources_intervalbasemodel                                                                    sources_intervalbasemodel @relation(fields: [intervalbasemodel_ptr_id], references: [outofprocesssource_ptr_id], onDelete: NoAction, onUpdate: NoAction, map: "sources_emailbasemod_intervalbasemodel_pt_39aed969_fk_sources_i")
+  metadata_metadatatype_sources_emailbasemodel_subject_metadata_type_idTometadata_metadatatype metadata_metadatatype?    @relation("sources_emailbasemodel_subject_metadata_type_idTometadata_metadatatype", fields: [subject_metadata_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sources_emailbasemod_subject_metadata_typ_d36e6373_fk_metadata_")
+  sources_imapemail                                                                            sources_imapemail?
+  sources_pop3email                                                                            sources_pop3email?
+
+  @@index([from_metadata_type_id], map: "sources_emailbasemodel_from_metadata_type_id_6f5ea19d")
+  @@index([subject_metadata_type_id], map: "sources_emailbasemodel_subject_metadata_type_id_d36e6373")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model sources_imapemail {
+  emailbasemodel_ptr_id  Int                    @id
+  mailbox                String                 @db.VarChar(64)
+  sources_emailbasemodel sources_emailbasemodel @relation(fields: [emailbasemodel_ptr_id], references: [intervalbasemodel_ptr_id], onDelete: NoAction, onUpdate: NoAction, map: "sources_imapemail_emailbasemodel_ptr_i_c141d743_fk_sources_e")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model sources_interactivesource {
+  source_ptr_id               Int                          @id
+  sources_source              sources_source               @relation(fields: [source_ptr_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sources_interactives_source_ptr_id_c31b33f5_fk_sources_s")
+  sources_sanescanner         sources_sanescanner?
+  sources_stagingfoldersource sources_stagingfoldersource?
+  sources_webformsource       sources_webformsource?
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model sources_intervalbasemodel {
+  outofprocesssource_ptr_id  Int                        @id
+  interval                   Int
+  uncompress                 String                     @db.VarChar(1)
+  document_type_id           Int
+  sources_emailbasemodel     sources_emailbasemodel?
+  documents_documenttype     documents_documenttype     @relation(fields: [document_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sources_intervalbase_document_type_id_90c75bb5_fk_documents")
+  sources_outofprocesssource sources_outofprocesssource @relation(fields: [outofprocesssource_ptr_id], references: [source_ptr_id], onDelete: NoAction, onUpdate: NoAction, map: "sources_intervalbase_outofprocesssource_p_814a4261_fk_sources_o")
+  sources_watchfoldersource  sources_watchfoldersource?
+
+  @@index([document_type_id], map: "sources_intervalbasemodel_document_type_id_90c75bb5")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model sources_outofprocesssource {
+  source_ptr_id             Int                        @id
+  sources_intervalbasemodel sources_intervalbasemodel?
+  sources_source            sources_source             @relation(fields: [source_ptr_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sources_outofprocess_source_ptr_id_f911cabb_fk_sources_s")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model sources_pop3email {
+  emailbasemodel_ptr_id  Int                    @id
+  timeout                Int
+  sources_emailbasemodel sources_emailbasemodel @relation(fields: [emailbasemodel_ptr_id], references: [intervalbasemodel_ptr_id], onDelete: NoAction, onUpdate: NoAction, map: "sources_pop3email_emailbasemodel_ptr_i_5bb63163_fk_sources_e")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model sources_sanescanner {
+  interactivesource_ptr_id  Int                       @id
+  device_name               String                    @db.VarChar(255)
+  mode                      String                    @db.VarChar(16)
+  resolution                Int?
+  adf_mode                  String                    @db.VarChar(16)
+  source                    String?                   @db.VarChar(32)
+  sources_interactivesource sources_interactivesource @relation(fields: [interactivesource_ptr_id], references: [source_ptr_id], onDelete: NoAction, onUpdate: NoAction, map: "sources_sanescanner_interactivesource_pt_1f814518_fk_sources_i")
+}
+
+model sources_source {
+  id                         Int                         @id @default(autoincrement())
+  label                      String                      @unique(map: "sources_source_label_88194d33_uniq") @db.VarChar(64)
+  enabled                    Boolean
+  sources_interactivesource  sources_interactivesource?
+  sources_outofprocesssource sources_outofprocesssource?
+  sources_sourcelog          sources_sourcelog[]
+
+  @@index([label], map: "sources_source_label_88194d33_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model sources_sourcelog {
+  id             Int            @id @default(autoincrement())
+  datetime       DateTime       @db.Timestamptz(6)
+  message        String
+  source_id      Int
+  sources_source sources_source @relation(fields: [source_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sources_sourcelog_source_id_c681ef4b_fk_sources_source_id")
+
+  @@index([source_id], map: "sources_sourcelog_source_id_c681ef4b")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model sources_stagingfoldersource {
+  interactivesource_ptr_id  Int                       @id
+  folder_path               String                    @db.VarChar(255)
+  preview_width             Int
+  preview_height            Int?
+  uncompress                String                    @db.VarChar(1)
+  delete_after_upload       Boolean
+  sources_interactivesource sources_interactivesource @relation(fields: [interactivesource_ptr_id], references: [source_ptr_id], onDelete: NoAction, onUpdate: NoAction, map: "sources_stagingfolde_interactivesource_pt_d26eae94_fk_sources_i")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model sources_watchfoldersource {
+  intervalbasemodel_ptr_id  Int                       @id
+  folder_path               String                    @db.VarChar(255)
+  sources_intervalbasemodel sources_intervalbasemodel @relation(fields: [intervalbasemodel_ptr_id], references: [outofprocesssource_ptr_id], onDelete: NoAction, onUpdate: NoAction, map: "sources_watchfolders_intervalbasemodel_pt_59c135a3_fk_sources_i")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model sources_webformsource {
+  interactivesource_ptr_id  Int                       @id
+  uncompress                String                    @db.VarChar(1)
+  sources_interactivesource sources_interactivesource @relation(fields: [interactivesource_ptr_id], references: [source_ptr_id], onDelete: NoAction, onUpdate: NoAction, map: "sources_webformsourc_interactivesource_pt_d29f762a_fk_sources_i")
+}
+
+model tags_tag {
+  id                 Int                  @id @default(autoincrement())
+  label              String               @unique @db.VarChar(128)
+  color              String               @db.VarChar(7)
+  tags_tag_documents tags_tag_documents[]
+
+  @@index([label], map: "tags_tag_label_4271b29e_like")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model tags_tag_documents {
+  id                 Int                @id @default(autoincrement())
+  tag_id             Int
+  document_id        Int
+  documents_document documents_document @relation(fields: [document_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tags_tag_documents_document_id_cbf643eb_fk_documents")
+  tags_tag           tags_tag           @relation(fields: [tag_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tags_tag_documents_tag_id_2fe342c7_fk_tags_tag_id")
+
+  @@unique([tag_id, document_id], map: "tags_tag_documents_tag_id_document_id_7698ad5e_uniq")
+  @@index([document_id], map: "tags_tag_documents_document_id_cbf643eb")
+  @@index([tag_id], map: "tags_tag_documents_tag_id_2fe342c7")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model tracking_trackedfile {
+  id                 Int               @id @default(autoincrement())
+  retain_or_transfer String            @db.VarChar(2)
+  closure_letter     DateTime?         @db.Date
+  instructions       DateTime?         @db.Date
+  completion         DateTime?         @db.Date
+  notice             DateTime?         @db.Date
+  receipt            DateTime?         @db.Date
+  client_id          Int?
+  file_id            Int
+  clients_client     clients_client?   @relation(fields: [client_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tracking_trackedfile_client_id_5bba0d2c_fk_clients_client_id")
+  register_register  register_register @relation(fields: [file_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tracking_trackedfile_file_id_6f5d2581_fk_register_register_id")
+
+  @@index([client_id], map: "tracking_trackedfile_client_id_5bba0d2c")
+  @@index([file_id], map: "tracking_trackedfile_file_id_6f5d2581")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model user_management_useroptions {
+  id                            Int       @id @default(autoincrement())
+  block_password_change         Boolean
+  user_id                       Int       @unique
+  display_closed_register_files Boolean
+  auth_user                     auth_user @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_management_useroptions_user_id_84734306_fk_auth_user_id")
+}

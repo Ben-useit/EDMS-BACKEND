@@ -1,0 +1,45 @@
+openapi: 3.0.1
+info:
+  title: EDMS-NODE
+  description: Node Backend based on Mayan-EDMS
+  contact: {}
+  version: '1.0'
+servers:
+  - url: api/v1
+    variables: {}
+paths:
+  /documents:
+    get:
+      tags:
+        - documents
+      summary: GetDocuments
+      operationId: GetDocuments
+      responses:
+        '200':
+          description: ''
+
+          headers: {}
+
+      deprecated: false
+
+      security: []
+
+    parameters: []
+
+components:
+  schemas: {}
+
+  securitySchemes:
+    apiKey:
+      type: apiKey
+
+      name: apikey
+
+      in: header
+
+security: []
+
+tags:
+  - name: documents
+
+    description: ''
