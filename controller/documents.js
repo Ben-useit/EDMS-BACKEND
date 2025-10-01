@@ -1,3 +1,5 @@
+const path = require('path');
+const { v4: uuid4 } = require('uuid');
 const { StatusCodes } = require('http-status-codes');
 const prisma = require('../prisma/db');
 const { getObjects } = require('../utils/authorization');
@@ -16,7 +18,7 @@ const getDocumentList = async (req, res) => {
   }
 
   const metaFilter = {
-    metadata_documentmetadata: {
+    documentmetadata: {
       some: {
         OR: metaSearch.map(({ meta }) => ({
           value: meta,
@@ -52,4 +54,38 @@ const getDocumentList = async (req, res) => {
     .json({ total, page, pages, items: documents.length, documents });
 };
 
-module.exports = { getDocumentList };
+const fileUpload = async (req, res) => {
+  const documents = req.files.documents;
+  const newDocuments = await createFileObjects(documents);
+  res.json({ document: newDocuments });
+};
+
+const createFileObjects = async (documents) => {
+  const newDocuments = await Promise.all(
+    documents.map(async (document) => {
+      const uuid = uuid4();
+      const docPath = path.join(
+        __dirname,
+        '../media',
+        'document_storage',
+        `${uuid}`
+      );
+
+      await document.mv(docPath);
+
+      const newDocument = await prisma.node_document.create({
+        data: {
+          label: document.name,
+          uuid: uuid,
+          date_added: new Date(),
+        },
+      });
+
+      return newDocument;
+    })
+  );
+
+  return newDocuments;
+};
+
+module.exports = { getDocumentList, fileUpload };

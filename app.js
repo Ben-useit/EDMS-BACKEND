@@ -3,7 +3,8 @@ const express = require('express');
 const documentRouter = require('./routes/document');
 const searchRouter = require('./routes/search');
 const registerRouter = require('./routes/register');
-
+const fileUpload = require('express-fileupload');
+const cors = require('cors');
 // Swagger
 const swaggerUI = require('swagger-ui-express');
 const YAML = require('yamljs');
@@ -13,7 +14,9 @@ const swaggerDocument = YAML.load('./swagger.yaml');
 
 const app = express();
 app.use(express.json());
-
+app.use(fileUpload());
+app.use(cors());
+app.use(express.static('/media'));
 app.use('/api/v1/documents', documentRouter);
 app.use('/api/v1/register', registerRouter);
 app.use('/api/v1/search', searchRouter);

@@ -30,6 +30,52 @@ model node_actor_type {
   acls node_acl[]
 }
 
+model node_document {
+  id                                            Int                                             @id @default(autoincrement())
+  uuid                                          String                                          @db.Uuid
+  label                                         String                                          @db.VarChar(255)
+  description                                   String?
+  comment                                       String?
+  date_added                                    DateTime                                        @db.Timestamptz(6)
+  language                                      String                                          @db.VarChar(8) @default("eng")
+  //document_type_id                              Int
+  in_trash                                      Boolean @default(false)
+  deleted_date_time                             DateTime?                                       @db.Timestamptz(6)
+  is_stub   Boolean @default(true)
+  documentmetadata                              node_documentmetadata[]
+}
+
+model node_documentmetadata {
+  id                    Int                   @id @default(autoincrement())
+  value                 String?               @db.VarChar(255)
+  document_id           Int
+  metadata_type_id      Int
+  node_document    node_document    @relation(fields: [document_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  node_metadatatype node_metadatatype @relation(fields: [metadata_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  // @@unique([document_id, metadata_type_id], map: "metadata_documentmetadat_document_id_metadata_typ_34933d91_uniq")
+  // @@index([document_id], map: "metadata_documentmetadata_document_id_b0b10479")
+  // @@index([metadata_type_id], map: "metadata_documentmetadata_metadata_type_id_b3eee3ed")
+  // @@index([value], map: "metadata_documentmetadata_value_4125a33a")
+  // @@index([value], map: "metadata_documentmetadata_value_4125a33a_like")
+}
+
+
+model node_metadatatype {
+  id                                                                                            Int                                 @id @default(autoincrement())
+  name                                                                                          String                              @unique @db.VarChar(48)
+  label                                                                                         String                              @db.VarChar(48)
+  default                                                                                       String?                             @db.VarChar(128)
+  node_documentmetadata node_documentmetadata[]
+  //lookup                                                                                        String?
+  //validation                                                                                    String                              @db.VarChar(64)
+  //parser                                                                                        String                              @db.VarChar(64)
+  //metadata_documentmetadata                                                                     metadata_documentmetadata[]
+  //metadata_documenttypemetadatatype                                                             metadata_documenttypemetadatatype[]
+
+  //@@index([name], map: "metadata_metadatatype_name_a23a6d59_like")
+}
+
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
 model acls_accesscontrollist {
