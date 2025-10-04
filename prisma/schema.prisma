@@ -7,6 +7,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model node_user {
+  id Int @id @default(autoincrement())
+  username String @unique
+  name String
+  surname String
+  password String
+  email String?
+  token node_token?
+
+}
+
+model node_token {
+  id       Int    @id @default(autoincrement())
+  refreshToken String
+  isValid Boolean @default(true)
+  ip String
+  userAgent String 
+  user node_user @relation(fields:[userId], references: [id])
+  userId Int @unique
+}
+
 model node_acl {
   id                                 Int                                  @id @default(autoincrement())
   object_id String

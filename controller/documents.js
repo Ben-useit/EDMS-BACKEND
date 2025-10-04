@@ -36,7 +36,7 @@ const getDocumentList = async (req, res) => {
       },
     },
   };
-  queryObject.where.AND.OR.push(metaFilter);
+  // queryObject.where.AND.OR.push(metaFilter);
 
   // Get total number
   const total = await prisma.documents_document.count(queryObject);
